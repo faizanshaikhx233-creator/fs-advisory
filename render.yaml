@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: fs-advisory
+    runtime: node
+    plan: free
+    buildCommand: npm ci && cd client && npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/dashboard
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: NODE_VERSION
+        value: 20

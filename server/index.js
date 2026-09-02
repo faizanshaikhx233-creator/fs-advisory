@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-initializeDatabase();
+// Use MongoDB if MONGODB_URI is provided (cloud deploy); otherwise local JSON files.
 
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
@@ -540,6 +540,13 @@ if (fs.existsSync(distDir)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`FS Advisory API running on http://localhost:${PORT}`);
-});
+initializeDatabase(process.env.MONGODB_URI || '')
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`FS Advisory API running on http://localhost:${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('Database initialization failed:', err);
+    process.exit(1);
+  });

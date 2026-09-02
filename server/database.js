@@ -12,7 +12,14 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 
 const store = {};
-for (const t of TABLES) {
+// When run on a cloud host (Render/Fly/etc.) with a MONGODB_URI, the same JSON
+// tables are mirrored to MongoDB so data survives restarts. Locally it uses JSON files.
+let useMongo = false;
+let mongoClient = null;
+let mongoPing = Promise.resolve();
+const MONGO_DB_NAME = process.env.MONGO_DB_NAME || 'fs_advisory';
+
+function loadFromDisk(t) {
   const file = path.join(DATA_DIR, `${t}.json`);
   if (fs.existsSync(file)) {
     store[t] = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -21,7 +28,20 @@ for (const t of TABLES) {
   }
 }
 
+for (const t of TABLES) loadFromDisk(t);
+
 function persist(table) {
+  if (useMongo) {
+    // Serialize writes so they land in order.
+    const snap = JSON.parse(JSON.stringify(store[table]));
+    mongoPing = mongoPing.then(() =>
+      mongoClient.db(MONGO_DB_NAME).collection(table)
+        .deleteMany({})
+        .then(() => mongoClient.db(MONGO_DB_NAME).collection(table).insertMany(snap, { ordered: true }))
+        .catch(err => console.error(`[mongo:${table}] write failed:`, err.message))
+    );
+    return;
+  }
   const file = path.join(DATA_DIR, `${table}.json`);
   fs.writeFileSync(file, JSON.stringify(store[table], null, 2));
 }
@@ -66,7 +86,26 @@ function table(table) {
   };
 }
 
-function initializeDatabase() {
+async function initializeDatabase(connectionString = '') {
+  if (connectionString) {
+    const { MongoClient } = require('mongodb');
+    mongoClient = new MongoClient(connectionString, { serverSelectionTimeoutMS: 10000 });
+    await mongoClient.connect();
+    const db = mongoClient.db(MONGO_DB_NAME);
+    for (const t of TABLES) {
+      try {
+        const docs = await db.collection(t).find({}).toArray();
+        store[t] = docs.map(d => { const { _id, ...rest } = d; return rest; });
+      } catch (e) {
+        console.warn(`[mongo] failed loading ${t}:`, e.message);
+        store[t] = [];
+      }
+    }
+    useMongo = true;
+    console.log('Connected to MongoDB (' + MONGO_DB_NAME + ') - ' +
+      TABLES.map(t => `${t}:${store[t].length}`).join(', '));
+  }
+
   if (store.chart_of_accounts.length > 0) {
     seedIfEmpty();
     return;

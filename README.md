@@ -63,6 +63,18 @@ Open **http://localhost:5173** in your browser.
 
 All data is stored as JSON files in `server/data/` (97 account heads pre-seeded, 11 staff pre-configured). The database auto-seeds on first run. To reset, delete the files in `server/data/`.
 
+> The ledger data in `server/data/` is git-ignored and never pushed to GitHub.
+
+## Deploying (Render + MongoDB)
+
+For a persistent shared link (data survives restarts), the app can use a MongoDB database. When the `MONGODB_URI` env var is set, the same tables are stored in MongoDB; otherwise it uses local JSON files.
+
+1. Create a free **MongoDB Atlas** cluster (M0) → Database Access user → get the connection string (`mongodb+srv://user:pass@...`).
+2. Push this repo to GitHub.
+3. On **Render**, choose "New → Blueprint" and point it at this repo (uses `render.yaml`).
+4. Set the `MONGODB_URI` env var to your Atlas connection string.
+5. Deploy — Render runs `npm start` and serves both the API and the built frontend.
+
 ## Bank statement import format
 
 Upload a **CSV** with columns: `Date, Description, Debit, Credit, Balance`.
