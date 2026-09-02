@@ -1,6 +1,26 @@
+import { virtualRequest } from '../lib/virtual-backend';
+
 const API_BASE = '/api';
 
+function isStandalone() {
+  if (typeof window === 'undefined') return false;
+  const h = window.location.hostname || '';
+  return h.endsWith('github.io') || window.location.protocol === 'file:';
+}
+
+function parseParams(url) {
+  const q = url.includes('?') ? url.split('?')[1] : '';
+  return Object.fromEntries(new URLSearchParams(q));
+}
+
 async function request(url, options = {}) {
+  if (isStandalone()) {
+    const [path] = url.split('?');
+    const method = (options.method || 'GET').toLowerCase();
+    const body = options.body ? JSON.parse(options.body) : undefined;
+    return virtualRequest(method, path, body, parseParams(url));
+  }
+
   const res = await fetch(`${API_BASE}${url}`, {
     headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
@@ -20,7 +40,10 @@ export const api = {
   post: (url, body) => request(url, { method: 'POST', body: JSON.stringify(body) }),
   put: (url, body) => request(url, { method: 'PUT', body: JSON.stringify(body) }),
   delete: (url) => request(url, { method: 'DELETE' }),
-  upload: (url, formData) => fetch(`${API_BASE}${url}`, { method: 'POST', body: formData }).then(r => r.json()),
+  upload: (url, formData) => {
+    if (isStandalone()) return virtualRequest('post', url, formData, {});
+    return fetch(`${API_BASE}${url}`, { method: 'POST', body: formData }).then(r => r.json());
+  },
 };
 
 export function formatCurrency(amount) {

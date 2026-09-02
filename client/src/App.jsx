@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Dashboard from './pages/Dashboard';
 import ChartOfAccounts from './pages/ChartOfAccounts';
