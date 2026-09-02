@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { api } from '../utils/api';
+import { api } from '@/src/lib/api';
 
 const accountTypes = ['Asset', 'Liability', 'Equity', 'Revenue', 'Expense'];
 

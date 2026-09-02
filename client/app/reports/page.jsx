@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { api, formatCurrency } from '../utils/api';
+import { api, formatCurrency } from '@/src/lib/api';
 
 export default function Reports() {
   const [from, setFrom] = useState(new Date().getFullYear() + '-01-01');

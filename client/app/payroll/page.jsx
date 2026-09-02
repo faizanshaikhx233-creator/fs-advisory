@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { api, formatCurrency } from '../utils/api';
+import { api, formatCurrency } from '@/src/lib/api';
 
 const PKR_TO_AED = 0.0136;
 
@@ -21,7 +23,6 @@ export default function Payroll() {
   const handleSalaryChange = (id, val) => setSalaryInputs({ ...salaryInputs, [id]: val });
 
   const runPayroll = async () => {
-    // Post salary entry only for employees with entered salary > 0
     const salaries = Object.entries(salaryInputs)
       .filter(([id, amt]) => parseFloat(amt) > 0)
       .map(([id, amt]) => ({ person_id: parseInt(id), amount: parseFloat(amt) }));
@@ -52,7 +53,6 @@ export default function Payroll() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Salary */}
         <div className="card">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold text-gray-800">Fixed Salaries (Pakistani Staff)</h3>
@@ -85,7 +85,6 @@ export default function Payroll() {
           <button onClick={runPayroll} className="btn-primary mt-4">Post Salary Entries</button>
         </div>
 
-        {/* Lead qualification bonus */}
         <div className="card">
           <h3 className="font-semibold text-gray-800 mb-4">Lead Qualification Bonus</h3>
           <p className="text-sm text-gray-600 mb-4">Each qualified lead earns the Pakistani employee <b>4,000 PKR ({formatCurrency(4000 * PKR_TO_AED)})</b>.</p>
@@ -110,7 +109,6 @@ export default function Payroll() {
         </div>
       </div>
 
-      {/* Commission structure info */}
       <div className="card mt-6">
         <h3 className="font-semibold text-gray-800 mb-3">Staff Commission Structure</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700">

@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { api, formatCurrency, formatDate } from '../utils/api';
+import { api, formatCurrency, formatDate } from '@/src/lib/api';
 
 export default function JournalEntries() {
   const [entries, setEntries] = useState([]);
@@ -137,7 +139,6 @@ export default function JournalEntries() {
         </button>
       </div>
 
-      {/* Date + bank filter */}
       <div className="card mb-6 flex flex-wrap items-end gap-4">
         <div>
           <label className="label">From Date</label>

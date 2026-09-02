@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { api, formatCurrency, formatDate } from '../utils/api';
+import { api, formatCurrency, formatDate } from '@/src/lib/api';
 
 export default function GeneralLedger() {
   const [accounts, setAccounts] = useState([]);
@@ -20,12 +22,9 @@ export default function GeneralLedger() {
     setLoaded(true);
   };
 
-  // Group by account
   const byAccount = {};
   for (const l of lines) {
-    if (!byAccount[l.account_id]) byAccount[l.account_id] = { account_name: l.account_name, code: l.code, running: 0, lines: [] };
-    let dr = l.debit, cr = l.credit;
-    // Determine balance direction by increasing a running balance for first account
+    if (!byAccount[l.account_id]) byAccount[l.account_id] = { account_name: l.account_name, code: l.code, lines: [] };
     byAccount[l.account_id].lines.push(l);
   }
 

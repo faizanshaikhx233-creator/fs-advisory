@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { api, formatCurrency } from '../utils/api';
+import Link from 'next/link';
+import { api, formatCurrency } from '@/src/lib/api';
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
@@ -107,9 +109,9 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <QuickLink to="/journal" title="New Journal Entry" desc="Record transactions" emoji="📝" />
-        <QuickLink to="/deals" title="Add a Deal" desc="Log sale & commission" emoji="🏠" />
-        <QuickLink to="/bank" title="Import Bank Statement" desc="Upload CSV" emoji="🏦" />
+        <QuickLink href="/journal" title="New Journal Entry" desc="Record transactions" emoji="📝" />
+        <QuickLink href="/deals" title="Add a Deal" desc="Log sale & commission" emoji="🏠" />
+        <QuickLink href="/bank" title="Import Bank Statement" desc="Upload CSV" emoji="🏦" />
       </div>
 
       <div className="mt-2 card">
@@ -139,9 +141,9 @@ export default function Dashboard() {
   );
 }
 
-function QuickLink({ to, title, desc, emoji }) {
+function QuickLink({ href, title, desc, emoji }) {
   return (
-    <Link to={to} className="card hover:shadow-md transition-shadow block">
+    <Link href={href} className="card hover:shadow-md transition-shadow block">
       <div className="text-3xl mb-2">{emoji}</div>
       <h3 className="font-semibold text-gray-800">{title}</h3>
       <p className="text-sm text-gray-500 mt-1">{desc}</p>

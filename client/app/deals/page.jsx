@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { api, formatCurrency, formatDate } from '../utils/api';
+import { api, formatCurrency, formatDate } from '@/src/lib/api';
 
 export default function Deals() {
   const [deals, setDeals] = useState([]);
@@ -25,7 +27,6 @@ export default function Deals() {
   const handleChange = (e) => {
     const next = { ...form, [e.target.name]: e.target.value };
     setForm(next);
-    // Calculate commission preview
     const agent = agents.find((a) => a.id === parseInt(next.agent_id));
     if (agent && next.sale_price) {
       const rate = next.lead_source === 'Personal' ? agent.personal_lead_rate : agent.company_lead_rate;
@@ -75,7 +76,6 @@ export default function Deals() {
         <button onClick={() => setShowForm(!showForm)} className="btn-primary">+ New Deal</button>
       </header>
 
-      {/* Split rules recap */}
       <div className="card mb-6 text-sm">
         <p className="font-semibold text-gray-700 mb-2">Commission Split Rules</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-600">

@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { api, formatCurrency, formatDate } from '../utils/api';
+import { api, formatCurrency, formatDate } from '@/src/lib/api';
 
 export default function BalanceSheet() {
   const [asOf, setAsOf] = useState('');
@@ -31,7 +33,6 @@ export default function BalanceSheet() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Assets */}
         <div className="card">
           <h3 className="font-bold text-lg text-green-700 mb-3">Assets</h3>
           <SectionList items={data.assets} />
@@ -41,7 +42,6 @@ export default function BalanceSheet() {
           </div>
         </div>
 
-        {/* Liabilities & Equity */}
         <div>
           <div className="card mb-6">
             <h3 className="font-bold text-lg text-red-700 mb-3">Liabilities</h3>

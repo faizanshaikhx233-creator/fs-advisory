@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { api, formatCurrency, formatDate } from '../utils/api';
+import { api, formatCurrency, formatDate } from '@/src/lib/api';
 
 const BANKS = [
   { code: '1021', label: 'Mashreq Bank (1021)' },

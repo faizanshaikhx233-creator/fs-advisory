@@ -1,4 +1,4 @@
-import seed from './seed.json' with { type: 'json' };
+import seed from './seed.json';
 
 const KEY = 'fs-advisory-data-v1';
 

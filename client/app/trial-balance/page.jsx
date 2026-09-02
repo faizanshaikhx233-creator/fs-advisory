@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { api, formatCurrency } from '../utils/api';
+import { api, formatCurrency } from '@/src/lib/api';
 
 export default function TrialBalance() {
   const [from, setFrom] = useState('');
