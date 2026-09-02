@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+client/dist/
+dist/
+
+# Sensitive business data (local ledger stays on your machine)
+server/data/*.json
+
+# Uploaded files
+server/uploads/
+uploads/
+
+# Environment
+.env
+.env.local
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
