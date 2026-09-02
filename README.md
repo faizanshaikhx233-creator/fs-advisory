@@ -31,16 +31,24 @@ An accounting dashboard for **FS Advisory** (real estate agency), configured for
 
 ## Tech Stack
 
-- **Backend**: Node.js + Express (port 3001), JSON-file storage in `server/data/` (no database install needed)
-- **Frontend**: React + Vite + Tailwind CSS (port 5173), proxied to API
+- **Frontend**: Next.js (App Router) + Tailwind CSS. All data lives in `client/src/lib/seed.json`; an in-browser store + virtual backend (`client/src/lib/store.js`, `client/src/lib/virtual-backend.js`) power every report. Statically exported for GitHub Pages, so it runs with no server.
+- **Live site**: https://faizanshaikhx233-creator.github.io/fs-advisory/
+- **Optional legacy backend**: Node.js + Express in `server/` (JSON-file storage, no DB install) — kept but not required by the Next.js app.
+
+## Live data model
+
+All accounting data is committed as JSON: journal entries + lines, chart of accounts, people. Any visitor's edits save to their own browser (localStorage). To publish new entries for everyone: edit `server/data/*.json` → regenerate the seed → rebuild → redeploy.
 
 ## How to run
 
 > Note: Node.js isn't installed system-wide, so a portable copy is used.
 
-**Option A – double-click:** run `start.bat` (starts API + app in two windows).
+- **Dev**: in `client/`, `npm install` then `npm run dev` → http://localhost:3000/fs-advisory
+- **Production build (static export for GitHub Pages)**: in `client/`, `npm run build` → output in `client/out/`
+- **Verify accounting with real data**: `node --experimental-loader ./scripts/json.loader.mjs ./scripts/test-virtual.mjs` in the repo root
+- **Deploy**: push `client/out/**` to the `gh-pages` branch (must include an empty `.nojekyll` so GitHub Pages keeps `_next/`)
 
-**Option B – manually:**
+**Legacy manual run (optional):**
 
 ```bash
 # 1. Set portable node on PATH
@@ -50,30 +58,17 @@ set "PATH=C:\Users\ADMIN\AppData\Local\Temp\opencode\node\node-v24.19.0-win-x64;
 cd fs-advisory && npm install
 cd client && npm install
 
-# 3. Start API (in one terminal)
-node server/index.js
-
-# 4. Start app (in another terminal)
+# 3. Run the Next.js dev server (static app; no API needed)
 cd client && npm run dev
 ```
 
-Open **http://localhost:5173** in your browser.
+Open **http://localhost:3000/fs-advisory** in your browser.
 
 ## Data Storage
 
-All data is stored as JSON files in `server/data/` (97 account heads pre-seeded, 11 staff pre-configured). The database auto-seeds on first run. To reset, delete the files in `server/data/`.
+The live ledger is committed as JSON in `client/src/lib/seed.json` (78 account heads, 95 journal entries, 11 staff) and powers every page in the browser. Per-visitor edits are saved to that browser's localStorage only.
 
-> The ledger data in `server/data/` is git-ignored and never pushed to GitHub.
-
-## Deploying (Render + MongoDB)
-
-For a persistent shared link (data survives restarts), the app can use a MongoDB database. When the `MONGODB_URI` env var is set, the same tables are stored in MongoDB; otherwise it uses local JSON files.
-
-1. Create a free **MongoDB Atlas** cluster (M0) → Database Access user → get the connection string (`mongodb+srv://user:pass@...`).
-2. Push this repo to GitHub.
-3. On **Render**, choose "New → Blueprint" and point it at this repo (uses `render.yaml`).
-4. Set the `MONGODB_URI` env var to your Atlas connection string.
-5. Deploy — Render runs `npm start` and serves both the API and the built frontend.
+The optional legacy Express backend can also run against its own JSON store in `server/data/` (auto-seeds on first run; useful for test uploads). That folder is git-ignored.
 
 ## Bank statement import format
 
